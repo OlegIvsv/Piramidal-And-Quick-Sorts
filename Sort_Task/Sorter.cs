@@ -24,9 +24,11 @@ namespace Sort_Task
             QuickRecursiveAlgorithm(array, startIndex, endIndex, comparer);
             return array;
         }
+
         /* Launcher */
         public static T[] QuickRecursive<T>(T[] input, Func<T, T, int> comparer)
             => QuickRecursive(input, 0, Math.Max(0, input.Length - 1), comparer);
+
         private static void QuickRecursiveAlgorithm<T>(T[] array, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
             void Swap(int indexA, int indexB)
@@ -74,9 +76,11 @@ namespace Sort_Task
             QuickIterativeAlgorithm(array, startIndex, endIndex, comparer);
             return array;
         }
+
         /* Launcher */
         public static T[] QuickIterative<T>(T[] input, Func<T, T, int> comparer)
            => QuickIterative(input, 0, Math.Max(0, input.Length - 1), comparer);
+
         private static void QuickIterativeAlgorithm<T>(T[] array, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
             void Swap(int indexA, int indexB)
@@ -122,6 +126,7 @@ namespace Sort_Task
         /* Launcher */
         public static T[] Piramidal<T>(T[] input, Func<T, T, int> comparer)
             => Piramidal(input, 0, Math.Max(input?.Length - 1 ?? 0, 0), comparer);
+
         /* Launcher */
         public static T[] Piramidal<T>(T[] input, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
@@ -136,6 +141,7 @@ namespace Sort_Task
             input.CopyTo(array, 0);
             return PiramidalAlgorithm(array, startIndex, endIndex, comparer);
         }
+
         private static T[] PiramidalAlgorithm<T>(T[] input, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
             int rangeL = endIndex - startIndex;
@@ -155,6 +161,7 @@ namespace Sort_Task
 
             return input;
         }
+
         private static void MakeHeap<T>(T[] input, int fatherNodeIndex, int startIndex, int border, Func<T, T, int> comparer)
         {
             while ((fatherNodeIndex - startIndex) * 2 + 1 <= border - startIndex)
