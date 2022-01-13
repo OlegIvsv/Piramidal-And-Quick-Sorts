@@ -56,6 +56,8 @@ namespace Sort_Task
             QuickRecursiveAlgorithm(array, currentIndex + 1, endIndex, comparer);
         }
 
+
+
         /* * * * Quick sort | Iterative method * * * */
         /* Launcher */
         public static T[] QuickIterative<T>(T[] input, int startIndex, int endIndex, Func<T, T, int> comparer)
@@ -114,56 +116,13 @@ namespace Sort_Task
             }
         }
 
+
+
         /* * * * Piramidal sort * * * */
-        /* All array*/
-        public static T[] Piramidal<T>(T[] input, Func<T,T,int> comparer)
-        {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (comparer == null)
-                throw new NullReferenceException(nameof(comparer));
-
-            var array = new T[input.Length];
-            input.CopyTo(array, 0);
-            /* Bringint to a heap */
-            for (int i = array.Length / 2 - 1; i >= 0; --i)
-                MakeHeap(array, i, array.Length - 1, comparer);
-            /* Sorting process */
-            for (int i = array.Length - 1; i >= 1; --i)
-            {
-                T temp = array[0];
-                array[0] = array[i];
-                array[i] = temp;
-
-                MakeHeap(array, 0, i - 1, comparer);
-            }
-
-            return array;
-        }
-        private static void MakeHeap<T>(T[] input, int fatherNodeIndex, int border, Func<T,T,int> comparer)
-        {
-            while(fatherNodeIndex * 2 + 1 <=  border)
-            {   
-                /* Search the largest of two descendants */
-                int maxDescendantIndex = fatherNodeIndex * 2 + 1;
-                if (fatherNodeIndex * 2 + 2 <= border 
-                    && comparer(input[fatherNodeIndex * 2 + 1], input[fatherNodeIndex * 2 + 2]) < 1)
-                    ++maxDescendantIndex;
-                /* Swap if necessary */
-                if (comparer(input[maxDescendantIndex], input[fatherNodeIndex]) > 0)
-                {
-                    T temp = input[maxDescendantIndex];
-                    input[maxDescendantIndex] = input[fatherNodeIndex];
-                    input[fatherNodeIndex] = temp;
-                    /* Proceed to descendant */
-                    fatherNodeIndex = maxDescendantIndex;
-                }
-                else
-                    break;
-            }
-        }
-
-        /* For ranges */
+        /* Launcher */
+        public static T[] Piramidal<T>(T[] input, Func<T, T, int> comparer)
+            => Piramidal(input, 0, Math.Max(input?.Length - 1 ?? 0, 0), comparer);
+        /* Launcher */
         public static T[] Piramidal<T>(T[] input, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
             if (input == null)
@@ -173,33 +132,37 @@ namespace Sort_Task
             if (comparer == null)
                 throw new NullReferenceException(nameof(comparer));
 
-            int rangeL = endIndex - startIndex + 1;
-
             var array = new T[input.Length];
             input.CopyTo(array, 0);
-            /* Bringint to a heap */
-            for (int i = startIndex + rangeL / 2 - 1; i >= startIndex; --i)
-                MakeHeap(array, i, startIndex, endIndex, comparer);
-            /* Sorting process */
-            for (int i = startIndex + rangeL - 1; i >= startIndex + 1; --i)
-            {
-                T temp = array[startIndex];
-                array[startIndex] = array[i];
-                array[i] = temp;
+            return PiramidalAlgorithm(array, startIndex, endIndex, comparer);
+        }
+        private static T[] PiramidalAlgorithm<T>(T[] input, int startIndex, int endIndex, Func<T, T, int> comparer)
+        {
+            int rangeL = endIndex - startIndex;
 
-                MakeHeap(array, startIndex, startIndex, i - 1, comparer);
+            /* Bringint to a heap */
+            for (int i = startIndex + rangeL / 2; i >= startIndex; --i)
+                MakeHeap(input, i, startIndex, endIndex, comparer);
+            /* Sorting process */
+            for (int i = startIndex + rangeL; i >= startIndex + 1; --i)
+            {
+                T temp = input[startIndex];
+                input[startIndex] = input[i];
+                input[i] = temp;
+
+                MakeHeap(input, startIndex, startIndex, i - 1, comparer);
             }
 
-            return array;
+            return input;
         }
         private static void MakeHeap<T>(T[] input, int fatherNodeIndex, int startIndex, int border, Func<T, T, int> comparer)
         {
             while ((fatherNodeIndex - startIndex) * 2 + 1 <= border - startIndex)
             {
                 /* Search the largest of two descendants */
-                int maxDescendantIndex = (fatherNodeIndex - startIndex) * 2 + 1 + startIndex;
-                if ((fatherNodeIndex - startIndex) * 2 + 2 + startIndex <= border
-                    && comparer(input[(fatherNodeIndex - startIndex) * 2 + 1 + startIndex], input[(fatherNodeIndex - startIndex) * 2 + 2 + startIndex]) < 1)
+                int firstDesIndex = (fatherNodeIndex - startIndex) * 2 + 1 + startIndex;
+                int maxDescendantIndex = firstDesIndex;
+                if (firstDesIndex + 1 <= border && comparer(input[firstDesIndex], input[firstDesIndex + 1]) < 1)
                     ++maxDescendantIndex;
                 /* Swap if necessary */
                 if (comparer(input[maxDescendantIndex], input[fatherNodeIndex]) > 0)
