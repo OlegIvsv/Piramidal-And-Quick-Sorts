@@ -29,15 +29,15 @@ namespace Sort_Task
         public static T[] QuickRecursive<T>(T[] input, Func<T, T, int> comparer)
             => QuickRecursive(input, 0, Math.Max(0, input.Length - 1), comparer);
 
+        private static void Swap<T>(T[] array ,int indexA, int indexB)
+        {
+            T temp = array[indexA];
+            array[indexA] = array[indexB];
+            array[indexB] = temp;
+        }
+
         private static void QuickRecursiveAlgorithm<T>(T[] array, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
-            void Swap(int indexA, int indexB)
-            {
-                T temp = array[indexA];
-                array[indexA] = array[indexB];
-                array[indexB] = temp;
-            }
-
             if (endIndex <= startIndex)
                 return;
 
@@ -48,12 +48,12 @@ namespace Sort_Task
             {
                 if (comparer(array[i], array[XElemIndex]) <= 0)
                 {
-                    Swap(currentIndex, i);
+                    Swap(array, currentIndex, i);
                     ++currentIndex;
                 }
             }
 
-            Swap(currentIndex, XElemIndex);
+            Swap(array, currentIndex, XElemIndex);
             QuickRecursiveAlgorithm(array, startIndex, currentIndex - 1, comparer);
             QuickRecursiveAlgorithm(array, currentIndex + 1, endIndex, comparer);
         }
@@ -83,13 +83,6 @@ namespace Sort_Task
 
         private static void QuickIterativeAlgorithm<T>(T[] array, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
-            void Swap(int indexA, int indexB)
-            {
-                T temp = array[indexA];
-                array[indexA] = array[indexB];
-                array[indexB] = temp;
-            }
-
             (int start, int end) current = (startIndex, endIndex);
 
             Stack<(int start, int end)> stack = new();
@@ -109,11 +102,11 @@ namespace Sort_Task
                 {
                     if (comparer(array[i], array[XElemIndex]) <= 0)
                     {
-                        Swap(currentIndex, i);
+                        Swap(array, currentIndex, i);
                         ++currentIndex;
                     }
                 }
-                Swap(currentIndex, XElemIndex);
+                Swap(array, currentIndex, XElemIndex);
 
                 stack.Push((current.start, currentIndex - 1));
                 stack.Push((currentIndex + 1, current.end));
@@ -142,41 +135,36 @@ namespace Sort_Task
             return PiramidalAlgorithm(array, startIndex, endIndex, comparer);
         }
 
-        private static T[] PiramidalAlgorithm<T>(T[] input, int startIndex, int endIndex, Func<T, T, int> comparer)
+        private static T[] PiramidalAlgorithm<T>(T[] array, int startIndex, int endIndex, Func<T, T, int> comparer)
         {
             int rangeL = endIndex - startIndex;
 
             /* Bringint to a heap */
             for (int i = startIndex + rangeL / 2; i >= startIndex; --i)
-                MakeHeap(input, i, startIndex, endIndex, comparer);
+                MakeHeap(array, i, startIndex, endIndex, comparer);
             /* Sorting process */
             for (int i = startIndex + rangeL; i >= startIndex + 1; --i)
             {
-                T temp = input[startIndex];
-                input[startIndex] = input[i];
-                input[i] = temp;
-
-                MakeHeap(input, startIndex, startIndex, i - 1, comparer);
+                Swap(array, startIndex, i);
+                MakeHeap(array, startIndex, startIndex, i - 1, comparer);
             }
 
-            return input;
+            return array;
         }
 
-        private static void MakeHeap<T>(T[] input, int fatherNodeIndex, int startIndex, int border, Func<T, T, int> comparer)
+        private static void MakeHeap<T>(T[] array, int fatherNodeIndex, int startIndex, int border, Func<T, T, int> comparer)
         {
             while ((fatherNodeIndex - startIndex) * 2 + 1 <= border - startIndex)
             {
                 /* Search the largest of two descendants */
                 int firstDesIndex = (fatherNodeIndex - startIndex) * 2 + 1 + startIndex;
                 int maxDescendantIndex = firstDesIndex;
-                if (firstDesIndex + 1 <= border && comparer(input[firstDesIndex], input[firstDesIndex + 1]) < 1)
+                if (firstDesIndex + 1 <= border && comparer(array[firstDesIndex], array[firstDesIndex + 1]) < 1)
                     ++maxDescendantIndex;
                 /* Swap if necessary */
-                if (comparer(input[maxDescendantIndex], input[fatherNodeIndex]) > 0)
+                if (comparer(array[maxDescendantIndex], array[fatherNodeIndex]) > 0)
                 {
-                    T temp = input[maxDescendantIndex];
-                    input[maxDescendantIndex] = input[fatherNodeIndex];
-                    input[fatherNodeIndex] = temp;
+                    Swap(array, maxDescendantIndex, fatherNodeIndex);
                     /* Proceed to descendant */
                     fatherNodeIndex = maxDescendantIndex;
                 }
